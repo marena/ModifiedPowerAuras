@@ -912,7 +912,7 @@
 						</Frames>
 					</Frame>
 					<Frame name="$parent_1_2">
-						<Size x="290" y="190" />
+						<Size x="290" y="210" />
 						<Anchors>
 							<Anchor point="TOP" relativeTo="$parent_1" relativePoint="BOTTOM" />
 						</Anchors>
@@ -1250,10 +1250,33 @@
 									</OnClick>
 								</Scripts>
 							</CheckButton>
+                            <CheckButton name="$parent_Checkbutton_Pet" inherits="MPowa_CheckTemplate">
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativeTo="$parent_Checkbutton_ShowCooldowns" relativePoint="BOTTOMLEFT">
+                                        <Offset x="0" y="11" />
+                                    </Anchor>
+                                </Anchors>
+                                <Scripts>
+                                    <OnLoad>
+                                        this.tooltipText = MPOWA_CHECKBUTTON_PET_TOOLTIP
+                                        getglobal(this:GetName().."Text"):SetText(MPOWA_CHECKBUTTON_PET)
+                                    </OnLoad>
+                                    <OnClick>
+                                        MPOWA:Checkbutton("pet")
+                                        if MPowa_ConfigFrame_Container_1_2_Checkbutton_EnemyTarget:GetChecked() or MPowa_ConfigFrame_Container_1_2_Checkbutton_FriendlyTarget:GetChecked() or MPowa_ConfigFrame_Container_1_2_Checkbutton_Pet:GetChecked() then
+                                            MPowa_ConfigFrame_Container_1_2_Editbox_DebuffDuration:Show()
+                                            MPOWA.SAVE[MPOWA.CurEdit]["unit"] = "pet"
+                                        else
+                                            MPowa_ConfigFrame_Container_1_2_Editbox_DebuffDuration:Hide()
+                                            MPOWA.SAVE[MPOWA.CurEdit]["unit"] = "player"
+                                        end
+                                    </OnClick>
+                                </Scripts>
+                            </CheckButton>
 							<CheckButton name="$parent_Checkbutton_EnemyTarget" inherits="MPowa_CheckTemplate">
 								<Anchors>
-									<Anchor point="TOPLEFT" relativeTo="$parent_Checkbutton_ShowCooldowns" relativePoint="BOTTOMLEFT">
-										<Offset x="0" y="5" />
+									<Anchor point="TOPLEFT" relativeTo="$parent_Checkbutton_Pet" relativePoint="BOTTOMLEFT">
+										<Offset x="0" y="11" />
 									</Anchor>
 								</Anchors>
 								<Scripts>
@@ -1263,7 +1286,7 @@
 									</OnLoad>
 									<OnClick>
 										MPOWA:Checkbutton("enemytarget")
-										if MPowa_ConfigFrame_Container_1_2_Checkbutton_EnemyTarget:GetChecked() or MPowa_ConfigFrame_Container_1_2_Checkbutton_FriendlyTarget:GetChecked() then
+                                        if MPowa_ConfigFrame_Container_1_2_Checkbutton_EnemyTarget:GetChecked() or MPowa_ConfigFrame_Container_1_2_Checkbutton_FriendlyTarget:GetChecked() or MPowa_ConfigFrame_Container_1_2_Checkbutton_Pet:GetChecked() then
 											MPowa_ConfigFrame_Container_1_2_Editbox_DebuffDuration:Show()
 											MPOWA.SAVE[MPOWA.CurEdit]["unit"] = "target"
 										else
@@ -1285,7 +1308,7 @@
 									</OnLoad>
 									<OnClick>
 										MPOWA:Checkbutton("friendlytarget")
-										if MPowa_ConfigFrame_Container_1_2_Checkbutton_EnemyTarget:GetChecked() or MPowa_ConfigFrame_Container_1_2_Checkbutton_FriendlyTarget:GetChecked() then
+                                        if MPowa_ConfigFrame_Container_1_2_Checkbutton_EnemyTarget:GetChecked() or MPowa_ConfigFrame_Container_1_2_Checkbutton_FriendlyTarget:GetChecked() or MPowa_ConfigFrame_Container_1_2_Checkbutton_Pet:GetChecked() then
 											MPowa_ConfigFrame_Container_1_2_Editbox_DebuffDuration:Show()
 											MPOWA.SAVE[MPOWA.CurEdit]["unit"] = "target"
 										else
@@ -1365,7 +1388,7 @@
 									</OnLoad>
 									<OnClick>
 										MPOWA:Checkbutton("isdebuff")
-										if MPowa_ConfigFrame_Container_1_2_Checkbutton_EnemyTarget:GetChecked() or MPowa_ConfigFrame_Container_1_2_Checkbutton_FriendlyTarget:GetChecked() then
+                                        if MPowa_ConfigFrame_Container_1_2_Checkbutton_EnemyTarget:GetChecked() or MPowa_ConfigFrame_Container_1_2_Checkbutton_FriendlyTarget:GetChecked() or MPowa_ConfigFrame_Container_1_2_Checkbutton_Pet:GetChecked() then
 											MPowa_ConfigFrame_Container_1_2_Editbox_DebuffDuration:Show()
 										else
 											MPowa_ConfigFrame_Container_1_2_Editbox_DebuffDuration:Hide()

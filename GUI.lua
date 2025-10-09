@@ -821,7 +821,8 @@ function MPOWA:Edit()
 		MPowa_ConfigFrame_Container_2_2_Checkbutton_Timer:SetChecked(self.SAVE[self.CurEdit].timer)
 		MPowa_ConfigFrame_Container_2_2_Checkbutton_Minutes:SetChecked(self.SAVE[self.CurEdit].minutes)
 		MPowa_ConfigFrame_Container_1_2_Checkbutton_ShowCooldowns:SetChecked(self.SAVE[self.CurEdit].cooldown)
-		MPowa_ConfigFrame_Container_1_2_Checkbutton_EnemyTarget:SetChecked(self.SAVE[self.CurEdit].enemytarget)
+        MPowa_ConfigFrame_Container_1_2_Checkbutton_Pet:SetChecked(self.SAVE[self.CurEdit].pet)
+        MPowa_ConfigFrame_Container_1_2_Checkbutton_EnemyTarget:SetChecked(self.SAVE[self.CurEdit].enemytarget)
 		MPowa_ConfigFrame_Container_1_2_Checkbutton_FriendlyTarget:SetChecked(self.SAVE[self.CurEdit].friendlytarget)
 		MPowa_ConfigFrame_Container_1_2_Checkbutton_RaidMember:SetChecked(self.SAVE[self.CurEdit].raidgroupmember)
 		MPowa_ConfigFrame_Container_1_2_Checkbutton_XSecsRemaining:SetChecked(self.SAVE[self.CurEdit].secsleft)
@@ -900,11 +901,12 @@ function MPOWA:Edit()
 		MPowa_ConfigFrame_Container_2_2_Slider_FontSize:SetValue(tnbr(self.SAVE[self.CurEdit].timerfontsize))
 		MPowa_ConfigFrame_Container_2_2_Slider_FontSizeText:SetText(MPOWA_SLIDER_FONTSIZE..tnbr(self.SAVE[self.CurEdit].timerfontsize))
 		
-		if self.SAVE[self.CurEdit].enemytarget or self.SAVE[self.CurEdit].friendlytarget then
+		if self.SAVE[self.CurEdit].enemytarget or self.SAVE[self.CurEdit].friendlytarget or self.SAVE[self.CurEdit].pet then
 			MPowa_ConfigFrame_Container_1_2_Editbox_DebuffDuration:Show()
 		else
 			MPowa_ConfigFrame_Container_1_2_Editbox_DebuffDuration:Hide()
 		end
+
 		if self.SAVE[self.CurEdit].flashanim then
 			MPowa_ConfigFrame_Container_2_2_Editbox_FlashAnim:Show()
 		else
@@ -981,6 +983,7 @@ function MPOWA:Ternary_OnClick(obj, var)
 	else
 		self:Iterate("player")
 		self:Iterate("target")
+        self:Iterate("pet")
 	end
 end
 
@@ -1016,6 +1019,7 @@ function MPOWA:Checkbutton(var)
 	else
 		self:Iterate("player")
 		self:Iterate("target")
+        self:Iterate("pet")
 	end
 	self:ApplyConfig(self.CurEdit)
 end
@@ -1124,12 +1128,14 @@ function MPOWA:Editbox_GroupNumber(obj)
 	end
 	MPOWA:ApplyConfig(self.CurEdit)
 	self:Iterate("player")
+    self:Iterate("pet")
 end
 
 function MPOWA:Editbox_Duration(obj)
 	if tnbr(obj:GetText()) ~= nil then
 		self.SAVE[self.CurEdit]["targetduration"] = tnbr(obj:GetText())
 		self:Iterate("target")
+        self:Iterate("pet")
 	end
 end
 
@@ -1142,6 +1148,7 @@ function MPOWA:Editbox_SECSLEFT(obj)
 		else
 			self:Iterate("target")
 			self:Iterate("player")
+            self:Iterate("pet")
 		end
 	end
 end
@@ -1180,6 +1187,7 @@ function MPOWA:Editbox_Name(obj)
 	else
 		self:Iterate("player")
 		self:Iterate("target")
+        self:Iterate("pet")
 	end
 end
 
@@ -1211,6 +1219,8 @@ function MPOWA:Editbox_SecondSpecifier(obj)
 	else
 		self:Iterate("player")
 		self:Iterate("target")
+        self:Iterate("pet")
+
 	end
 end
 
@@ -1224,6 +1234,7 @@ function MPOWA:Editbox_Stacks(obj)
 		else
 			self:Iterate("player")
 			self:Iterate("target")
+            self:Iterate("pet")
 		end
 	end
 end
@@ -1238,6 +1249,7 @@ function MPOWA:Editbox_CPStacks(obj)
 		else
 			self:Iterate("player")
 			self:Iterate("target")
+            self:Iterate("pet")
 		end
 	end
 end
@@ -1254,6 +1266,7 @@ function MPOWA:Editbox_FlashAnimStart(obj)
 		else
 			self:Iterate("player")
 			self:Iterate("target")
+            self:Iterate("pet")
 		end
 	end
 end

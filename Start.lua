@@ -43,6 +43,7 @@ function MPOWA:CreateSave(i)
 		flashanimstart = 5,
 		unit = "player",
 		rgmname = "",
+        pet = false,
 		icon_r = 1,
 		icon_b = 1,
 		icon_g = 1,
@@ -176,8 +177,8 @@ function MPOWA:Init()
 			
 			if val["enemytarget"] or val["friendlytarget"] then
 				self.SAVE[cat]["unit"] = "target"
-			else
-				self.SAVE[cat]["unit"] = nil
+            elseif val["pet"] then
+                self.SAVE[cat]["unit"] = "pet"
 			end
 			
 			if val["used"] then
@@ -329,4 +330,5 @@ MPOWA:RegisterEvent("PLAYER_REGEN_ENABLED")
 MPOWA:RegisterEvent("UNIT_MANA")
 MPOWA:RegisterEvent("UNIT_RAGE")
 MPOWA:RegisterEvent("UNIT_ENERGY")
+MPOWA:RegisterEvent("UNIT_PET")
 MPOWA:RegisterEvent("PLAYER_LOGOUT")

@@ -11,7 +11,7 @@ local tnbr = tonumber
 local UnitIsDeadOrGhost = UnitIsDeadOrGhost
 local UnitAffectingCombat = UnitAffectingCombat
 local UnitInRaid = UnitInRaid
-local UnitBuff = UnitBuff 
+local UnitBuff = UnitBuff
 local UnitDebuff = UnitDebuff
 local UnitMana = UnitMana
 local UnitManaMax = UnitManaMax
@@ -39,9 +39,12 @@ function MPOWA:OnUpdate(elapsed)
 				path = self.SAVE[cat]
 				if not path then return end
 
-				p1, p2 = self:TernaryReturn(cat, "inparty", self:InParty()), self:TernaryReturn(cat, "inraid", UnitInRaid("player"))
-				if not self.active[cat] and self:TernaryReturn(cat, "alive", self:Reverse(UnitIsDeadOrGhost("player"))) 
-				and self:TernaryReturn(cat, "mounted", self.mounted) and self:TernaryReturn(cat, "incombat", UnitAffectingCombat("player")) 
+                local unit = path["unit"] or "player"
+                p1, p2 = self:TernaryReturn(cat, "inparty", self:InParty()), self:TernaryReturn(cat, "inraid", UnitInRaid("player"))
+
+                if not self.active[cat] and self:TernaryReturn(cat, "alive", self:Reverse(UnitIsDeadOrGhost(unit)))
+				and self:TernaryReturn(cat, "mounted", self.mounted)
+				and self:TernaryReturn(cat, "incombat", UnitAffectingCombat("player"))
 				and (((p1 or p2) and ((path["inparty"]==0 or path["inparty"]==true) and (path["inraid"]==0 or path["inraid"]==true))) or (p1 and p2))
 				and self:TernaryReturn(cat, "inbattleground", self.bg) and self:TernaryReturn(cat, "inraidinstance", self.instance) then
 					self.frames[cat][4]:Hide()
@@ -143,10 +146,11 @@ function MPOWA:OnUpdate(elapsed)
 		end
 		for cat, val in self.active do
 			if val then
-				path = self.SAVE[cat]
-				if not path then return end
+                path = self.SAVE[cat]
+                if not path then return end
+
 				text, count = "", 0
-				if (path["unit"] or "player") == "player" then
+				if (path["unit"] == "player") then
 					count = GetPlayerBuffApplications(val)
 				else
 					if path["isdebuff"] then
@@ -167,6 +171,7 @@ function MPOWA:OnUpdate(elapsed)
 						end
 					end
 				end
+
 				if self:IsStacks(count or 0, cat, "stacks") then
 					duration = self:GetDuration(val, cat)
 					if (count or 0)>1 and not path["hidestacks"] then
@@ -250,21 +255,23 @@ function MPOWA:FormatDuration(duration, path)
 end
 
 function MPOWA:GetDuration(index, cat)
-	local path = self.SAVE[cat]
-	if not path["raidgroupmember"] then -- check this
-		if path["friendlytarget"] or path["enemytarget"] then
-			time = GT()
-			self.activeTimer[cat] = self.activeTimer[cat] or time
-			if (self.activeTimer[cat]+path["targetduration"]-time)<0 then
-				self.activeTimer[cat] = time
-			end
-			return (self.activeTimer[cat]+path["targetduration"]-time)
-		else
-			return GetPlayerBuffTimeLeft(index) or 0
-		end
-	else
-		return 0
-	end
+    local path = self.SAVE[cat]
+
+    -- check this
+    if path["raidgroupmember"] then
+        return 0
+    end
+
+    if path["friendlytarget"] or path["enemytarget"] or path["pet"] then
+        time = GT()
+        self.activeTimer[cat] = self.activeTimer[cat] or time
+        if (self.activeTimer[cat] + path["targetduration"] - time) < 0 then
+            self.activeTimer[cat] = time
+        end
+        return (self.activeTimer[cat] + path["targetduration"] - time)
+    else
+        return GetPlayerBuffTimeLeft(index) or 0
+    end
 end
 
 function MPOWA:GetCooldown(buff)
@@ -288,7 +295,7 @@ function MPOWA:GetCooldown(buff)
 						for u=1, GetContainerNumSlots(p) do
 							start, duration, enable = GetContainerItemCooldown(p,u)
 							_,_,name=strfind(GetContainerItemLink(p,u) or "","^.*%[(.*)%].*$")
-							if (name) then 
+							if (name) then
 								if strfind(strlower(buff), strlower(name)) then
 									if duration>2 then
 										return ((start or 0)+(duration or 0))-GT() + 1
@@ -320,13 +327,13 @@ function MPOWA:GetCooldown(buff)
 end
 
 function MPOWA:GetSpellSlot(buff)
-	if not buff then 
-		return 0 
+	if not buff then
+		return 0
 	end
 	local i = 1
 	while true do
 		local name, rank = GetSpellName(i, "spell")
-		if (not name) or strfind(strlower(name), strlower(buff)) or name==buff then 
+		if (not name) or strfind(strlower(name), strlower(buff)) or name==buff then
 			return i
 		end
 		if i > 1000 then
@@ -340,19 +347,19 @@ end
 local BuffExist = {}
 function MPOWA:Iterate(unit)
 	BuffExist = {}
-	if unit=="player" then
+	if unit=="player" or unit=="pet" then
 		self:IsMounted()
 		--self:InParty()
 		self:InBG()
 		self:InInstance()
 	end
-	
+
 	for cat, val in self.active do
 		if (not self.SAVE[cat]["unit"] and unit=="player") or (self.SAVE[cat]["unit"]==unit) then
 			self.pushed[cat] = false;
 		end
 	end
-	
+
 	if self.Windfury then
 		self:Push("Windfury", "player", 42, false, "Windfury")
 		self:Push("Windfury Totem", "player", 43, false, "Windfury Totem")
@@ -361,7 +368,7 @@ function MPOWA:Iterate(unit)
 	for cat, val in pairs(self.SAVE) do
 		if (val["buffname"] == "unitpower") then
 			local unit = arg1
-			if (unit == "target") then 
+			if (unit == "target") then
 				self:Push("unitpower", unit, 45, false)
 			elseif (string.find(unit,"raid")) then
 				local st = string.sub(unit, 5)
@@ -376,7 +383,7 @@ function MPOWA:Iterate(unit)
 			end
 		end
 	end
-	
+
 	for i=1, 40 do
 		local p = i
 		local debuff
@@ -390,7 +397,7 @@ function MPOWA:Iterate(unit)
 		end
 		local buff = MPowa_TooltipTextLeft1:GetText()
 		self:Push(buff, unit, p, false)
-		
+
 		if i<17 then
 			MPowa_Tooltip:ClearLines()
 			p = i
@@ -412,7 +419,10 @@ function MPOWA:Iterate(unit)
 			if not BuffExist[cat] then
 				self.activeTimer[val] = nil
 				p = self.SAVE[cat]
-				if ((p["friendlytarget"] or p["enemytarget"]) and unit=="target") or (not p["raidgroupmember"] and not p["friendlytarget"] and not p["enemytarget"] and unit=="player") or p["raidgroupmember"] then
+				if ((p["friendlytarget"] or p["enemytarget"]) and unit=="target")
+                        or (not p["raidgroupmember"] and not p["friendlytarget"] and not p["enemytarget"] and not p["pet"] and unit=="player")
+                        or (p["pet"] and unit=="pet")
+                        or p["raidgroupmember"] then
 					self.active[cat] = false
 					self.lastCount[cat] = 0
 					self.frames[cat][3]:Hide()
@@ -443,19 +453,22 @@ function MPOWA:Push(aura, unit, i, isdebuff)
 			BuffExist[val] = true -- May cause issues elsewhere :/
 			if path["isdebuff"]==isdebuff and ((path["secondspecifier"] and (strlower(path["secondspecifiertext"])==tex)) or not path["secondspecifier"]) then
 				local p1, p2 = self:TernaryReturn(val, "inparty", self:InParty()), self:TernaryReturn(val, "inraid", UnitInRaid("player"))
-				if self:TernaryReturn(val, "alive", self:Reverse(UnitIsDeadOrGhost("player"))) and self:TernaryReturn(val, "mounted", self.mounted) 
-					and self:TernaryReturn(val, "incombat", UnitAffectingCombat("player")) 
+				if self:TernaryReturn(val, "alive", self:Reverse(UnitIsDeadOrGhost("player"))) and self:TernaryReturn(val, "mounted", self.mounted)
+					and self:TernaryReturn(val, "incombat", UnitAffectingCombat("player"))
 					and (((p1 or p2) and ((path["inparty"]==0 or path["inparty"]==true) and (path["inraid"]==0 or path["inraid"]==true))) or (p1 and p2))
-					and self:TernaryReturn(val, "inbattleground", self.bg) 
-					and self:TernaryReturn(val, "inraidinstance", self.instance) and not path["cooldown"] 
+					and self:TernaryReturn(val, "inbattleground", self.bg)
+					and self:TernaryReturn(val, "inraidinstance", self.instance) and not path["cooldown"]
 					and (self:IsStacks(GetComboPoints("player", "target"), val, "cpstacks") or (path["buffname"] == "unitpower" and path["inverse"])) then
+
 					if path["enemytarget"] and unit == "target" then
 						self.active[val] = i
+                    elseif path["pet"] and unit == "pet" then
+                        self.active[val] = i
 					elseif path["friendlytarget"] and unit == "target" then
 						self.active[val] = i
 					elseif path["raidgroupmember"] then -- have to check those vars
 						self.active[val] = i
-					elseif not path["enemytarget"] and not path["friendlytarget"] and not path["raidgroupmember"] and unit == "player" then
+					elseif not path["pet"] and not path["enemytarget"] and not path["friendlytarget"] and not path["raidgroupmember"] and unit == "player" then
 						self.active[val] = i
 					end
 					if self.pushed[val] and aura ~= "unitpower" then
@@ -506,7 +519,7 @@ function MPOWA:IsStacks(count, id, kind)
 					con = "!"
 				elseif (con == "!") then
 					con = "="
-				end	
+				end
 			end
 		end
 
