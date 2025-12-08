@@ -30,6 +30,17 @@ local UpdateTime, LastUpdate = 0.05, 0
 local path, duration, text, count, time
 local func_table = {}
 
+local defaults = {
+    ["Enslave Demon"] = {
+        ["durations"] = {
+            ["_"] = 300,
+            ["Infernal"] = 180,
+            ["Doomguard"] = 180,
+            ["Felguard"] = 180,
+        }
+    }
+}
+
 function MPOWA:OnUpdate(elapsed)
 	LastUpdate = LastUpdate + elapsed
 	if LastUpdate >= UpdateTime then
@@ -263,15 +274,45 @@ function MPOWA:GetDuration(index, cat)
     end
 
     if path["friendlytarget"] or path["enemytarget"] or path["pet"] then
+
+        local td = self:GetTargetDuration(path, cat)
+        if td <= 0 then
+            return 0
+        end
+
         time = GT()
         self.activeTimer[cat] = self.activeTimer[cat] or time
-        if (self.activeTimer[cat] + path["targetduration"] - time) < 0 then
+        if (self.activeTimer[cat] + td - time) < 0 then
             self.activeTimer[cat] = time
         end
-        return (self.activeTimer[cat] + path["targetduration"] - time)
+        return (self.activeTimer[cat] + td - time)
     else
         return GetPlayerBuffTimeLeft(index) or 0
     end
+end
+
+function MPOWA:GetTargetDuration(path, cat)
+    if path["targetduration"] and path["targetduration"] > 0 then
+        return path["targetduration"]
+    end
+
+    --DEFAULT_CHAT_FRAME:AddMessage(
+    --    string.format("Get duration on (pet: %s, buff: %s, dur: %s)", tostring(path["pet"]), tostring(path["buffname"]), tostring(path["targetduration"]))
+    --)
+
+    if path["pet"] and defaults then
+        local spellDefaults = defaults[path["buffname"]]
+        if spellDefaults and spellDefaults.durations then
+            local petName = UN("pet")
+            if petName and spellDefaults.durations[petName] then
+                return spellDefaults.durations[petName]
+            else
+                return spellDefaults.durations._
+            end
+        end
+    end
+
+    return 0
 end
 
 function MPOWA:GetCooldown(buff)

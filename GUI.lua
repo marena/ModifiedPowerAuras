@@ -814,6 +814,7 @@ function MPOWA:Edit()
 		MPowa_ConfigFrame_Container_1_2_Editbox_Stacks:SetText(self.SAVE[self.CurEdit].stacks)
 		MPowa_ConfigFrame_Container_1_2_Editbox_CPStacks:SetText(self.SAVE[self.CurEdit].cpstacks)
 		MPowa_ConfigFrame_Container_1_2_Editbox_Player:SetText(self.SAVE[self.CurEdit].rgmname or "")
+        MPowa_ConfigFrame_Container_1_2_Editbox_PetName:SetText(self.SAVE[self.CurEdit].petname or "")
 		MPowa_ConfigFrame_Container_1_2_Editbox_DebuffDuration:SetText(self.SAVE[self.CurEdit].targetduration)
 		MPowa_ConfigFrame_Container_1_2_Editbox_SECLEFT:SetText(self.SAVE[self.CurEdit].secsleftdur or "")
 		MPowa_ConfigFrame_Container_1_2_Checkbutton_Debuff:SetChecked(self.SAVE[self.CurEdit].isdebuff)
@@ -903,8 +904,10 @@ function MPOWA:Edit()
 		
 		if self.SAVE[self.CurEdit].enemytarget or self.SAVE[self.CurEdit].friendlytarget or self.SAVE[self.CurEdit].pet then
 			MPowa_ConfigFrame_Container_1_2_Editbox_DebuffDuration:Show()
+            MPowa_ConfigFrame_Container_1_2_Editbox_PetName:Show()
 		else
 			MPowa_ConfigFrame_Container_1_2_Editbox_DebuffDuration:Hide()
+            MPowa_ConfigFrame_Container_1_2_Editbox_PetName:Hide()
 		end
 
 		if self.SAVE[self.CurEdit].flashanim then
@@ -1278,6 +1281,10 @@ function MPOWA:Editbox_Player(obj)
 		self.RaidGroupMembers[self.SAVE[self.CurEdit]["rgmname"]] = true
 		self:GetGroup()
 	end
+end
+
+function MPOWA:Editbox_PetName(obj)
+    self.SAVE[self.CurEdit]["petname"] = obj:GetText()
 end
 
 function MPOWA:TestAll()

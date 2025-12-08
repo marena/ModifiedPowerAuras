@@ -1137,6 +1137,50 @@
 									</Layer>
 								</Layers>
 							</EditBox>
+                            <EditBox name="$parent_Editbox_PetName" autoFocus="false" inherits="InputBoxTemplate" hidden="true">
+                                <Size x="65" y="16" />
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativeTo="$parent_Editbox_Stacks" relativePoint="BOTTOMLEFT">
+                                        <Offset x="0" y="-20" />
+                                    </Anchor>
+                                </Anchors>
+                                <FontString inherits="ChatFontNormal" bytes="200" />
+                                <Scripts>
+                                    <OnLoad>
+                                        this:SetMaxLetters(200)
+                                        this.aide = MPOWA_EDITBOX_PET_NAME_TOOLTIP
+                                        getglobal(this:GetName().."Text"):SetText(MPOWA_EDITBOX_PET_NAME)
+                                    </OnLoad>
+                                    <OnShow>
+                                        this:ClearFocus()
+                                    </OnShow>
+                                    <OnEnterPressed>
+                                        this:ClearFocus()
+                                    </OnEnterPressed>
+                                    <OnEditFocusLost>
+                                        MPOWA:Editbox_PetName(this)
+                                    </OnEditFocusLost>
+                                    <OnEnter>
+                                        GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+                                        GameTooltip:SetText(this.aide, nil, nil, nil, nil, 1)
+                                    </OnEnter>
+                                    <OnLeave>
+                                        GameTooltip:Hide()
+                                    </OnLeave>
+                                </Scripts>
+                                <Layers>
+                                    <Layer level="OVERLAY">
+                                        <FontString name="$parentText" inherits="GameFontNormalSmall" justifyH="LEFT" text="">
+                                            <Size x="120" y="20" />
+                                            <Anchors>
+                                                <Anchor point="BOTTOMLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+                                                    <Offset x="0" y="0" />
+                                                </Anchor>
+                                            </Anchors>
+                                        </FontString>
+                                    </Layer>
+                                </Layers>
+                            </EditBox>
 							<EditBox name="$parent_Editbox_DebuffDuration" autoFocus="false" inherits="InputBoxTemplate">
 								<Size x="65" y="16" />
 								<Anchors>
@@ -1265,9 +1309,11 @@
                                         MPOWA:Checkbutton("pet")
                                         if MPowa_ConfigFrame_Container_1_2_Checkbutton_EnemyTarget:GetChecked() or MPowa_ConfigFrame_Container_1_2_Checkbutton_FriendlyTarget:GetChecked() or MPowa_ConfigFrame_Container_1_2_Checkbutton_Pet:GetChecked() then
                                             MPowa_ConfigFrame_Container_1_2_Editbox_DebuffDuration:Show()
+                                            MPowa_ConfigFrame_Container_1_2_Editbox_PetName:Show()
                                             MPOWA.SAVE[MPOWA.CurEdit]["unit"] = "pet"
                                         else
                                             MPowa_ConfigFrame_Container_1_2_Editbox_DebuffDuration:Hide()
+                                            MPowa_ConfigFrame_Container_1_2_Editbox_PetName:Hide()
                                             MPOWA.SAVE[MPOWA.CurEdit]["unit"] = "player"
                                         end
                                     </OnClick>

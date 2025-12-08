@@ -44,6 +44,7 @@ function MPOWA:CreateSave(i)
 		unit = "player",
 		rgmname = "",
         pet = false,
+        petname = "",
 		icon_r = 1,
 		icon_b = 1,
 		icon_g = 1,
