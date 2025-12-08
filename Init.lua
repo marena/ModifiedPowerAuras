@@ -135,21 +135,22 @@ if MPOWA_SAVE then
 end
 
 function MPOWA:OnEvent(event, arg1)
-
-    if event == "UNIT_PET" and arg1 == "player" then
-        if not UnitExists("pet") then
-            for cat, val in pairs(self.active) do
-                local path = self.SAVE[cat]
-                if path and path["pet"] then
-                    self.frames[cat][3]:Hide()
-                    self.frames[cat][4]:Hide()
-                    self:FHide(cat)
-                    self.active[cat] = false
-                    self.lastCount[cat] = 0
+    if event == "UNIT_PET" then
+        if (arg1 == "player") then
+            if not UnitExists("pet") then
+                for cat, val in pairs(self.active) do
+                    local path = self.SAVE[cat]
+                    if path and path["pet"] then
+                        self.frames[cat][3]:Hide()
+                        self.frames[cat][4]:Hide()
+                        self:FHide(cat)
+                        self.active[cat] = false
+                        self.lastCount[cat] = 0
+                    end
                 end
             end
+            self:Iterate("pet")
         end
-        self:Iterate("pet")
     elseif event == "UNIT_AURA" then
         if arg1 == "target" or arg1 == "player" or arg1 == "pet" or self.groupByUnit[arg1] then
             self:Iterate(arg1)
