@@ -570,7 +570,7 @@ function MPOWA:ApplyDynamicGroup(i)
 			end
 		else
 			for cat, va in pairs(self.SAVE) do
-				if self.frames[cat] and (tnbr(va["groupnumber"])==i or cat==i) and (self.active[cat] and not self.NeedUpdate[cat]) or (self.NeedUpdate[cat] and not self.active[cat] and (((self:GetCooldown(va["buffname"]) or 0)>0) or not va["cooldown"]) or va["test"] or self.testAll) then
+				if self.frames[cat] and (tnbr(va["groupnumber"])==i or cat==i) and ((self.active[cat] and not self.NeedUpdate[cat]) or (self.NeedUpdate[cat] and not self.active[cat] and (((self:GetCooldown(va["buffname"]) or 0)>0) or not va["cooldown"])) or va["test"] or self.testAll) then
 					self.frames[cat][1]:ClearAllPoints()
 					if val["dynamicorientation"] == 1 then
 						self.frames[cat][1]:SetPoint("TOPLEFT", self.frames[i][5], "TOPLEFT", inc*spacing, 0)

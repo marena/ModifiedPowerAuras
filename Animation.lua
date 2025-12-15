@@ -20,7 +20,7 @@ end
 
 function MPOWA:FHide(key)
 	local p = self.SAVE[key]
-	if p and self.frames[key] and self.frames[key][1]:IsVisible() and not self.testall and not p["test"] then
+	if p and self.frames[key] and self.frames[key][1]:IsVisible() and not self.testAll and not p["test"] then
 		if p["useendsound"] then
 			if p.endsound < 16 then
 				PlaySound(self.SOUND[p.endsound], "master")
