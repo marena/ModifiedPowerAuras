@@ -166,12 +166,13 @@ function MPOWA:OnUpdate(elapsed)
 				else
 					if path["isdebuff"] then
 						text, count = UnitDebuff(path["unit"], val)
-						if not self.lastCount[cat] or self.lastCount[cat]<count then
+						count = count or 0
+						if not self.lastCount[cat] or self.lastCount[cat] < count then
 							self.activeTimer[cat] = GT()
 						end
 						self.lastCount[cat] = count
 					else
-						text, count = UnitBuff(path["unit"], val)
+						text, count = UnitBuff(pathwd["unit"], val)
 					end
 				end
 				self:SetTexture(cat, text, val)
